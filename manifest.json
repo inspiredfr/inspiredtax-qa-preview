@@ -1,0 +1,47 @@
+[
+  {
+    "id": "v8.36.1",
+    "slug": "v8.36.1",
+    "label": "v8.36.1",
+    "subtitle": "Pre-M0..M9 Baseline",
+    "git_ref": "v8.36.1",
+    "git_path": "InspiredTax_v8_36.html",
+    "uses_dob": true,
+    "badge_color": "#64748b",
+    "sha": "3e243808826d83dcf00113b956d17f6245047a4b",
+    "date": "2026-10-25 12:07:21 +0200",
+    "subject": "chore: prepare InspiredTax 8.36.1 (#454)",
+    "orig_bytes": 2529813,
+    "preview_bytes": 2550553
+  },
+  {
+    "id": "v8.37.0",
+    "slug": "v8.37.0",
+    "label": "v8.37.0",
+    "subtitle": "Shipped M0\u2013M9 Release",
+    "git_ref": "v8.37.0",
+    "git_path": "InspiredTax_v8_37.html",
+    "uses_dob": false,
+    "badge_color": "#0284c7",
+    "sha": "2a345342016eaa1614852360727e917e56835d77",
+    "date": "2026-11-21 01:39:00 +0200",
+    "subject": "chore: prepare InspiredTax 8.37.0 (#514)",
+    "orig_bytes": 2772259,
+    "preview_bytes": 2793007
+  },
+  {
+    "id": "v4-iter3",
+    "slug": "v4-iter3",
+    "label": "v4-iter3",
+    "subtitle": "UX Review + IT23 Branch",
+    "git_ref": "origin/ux-review/v4-iter3",
+    "git_path": "InspiredTax_v8_37.html",
+    "uses_dob": false,
+    "badge_color": "#10b981",
+    "sha": "37674560c727fb02d4e2147e0900bc262faf6b92",
+    "date": "2026-11-23 10:41:47 +0200",
+    "subject": "fix(it23): remediate onboarding, residency gate, tax-year binding, keypad & tile selection",
+    "orig_bytes": 2807943,
+    "preview_bytes": 2828691
+  }
+]

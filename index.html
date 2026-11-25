@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>InspiredTax · Mobile QA Hub (v8.36.1 vs v8.37.0 vs v4-iter3)</title>
+<style>
+:root {
+  --bg: #070b14;
+  --sf1: #0f172a;
+  --sf2: #162036;
+  --bd: rgba(148, 163, 184, 0.22);
+  --tx: #f8fafc;
+  --mut: #94a3b8;
+  --acc: #38bdf8;
+  --ok: #10b981;
+  --warn: #f59e0b;
+  --err: #ef4444;
+  --b1: #64748b;
+  --b2: #0284c7;
+  --b3: #10b981;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--tx); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif; font-size: 15px; line-height: 1.45; }
+a { color: inherit; text-decoration: none; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 14px 14px 96px; }
+.topbar {
+  position: sticky; top: 0; z-index: 40;
+  background: rgba(7, 11, 20, 0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--bd); padding: 12px 14px;
+}
+.topbar-in { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.brand { display: flex; flex-direction: column; gap: 2px; }
+.brand h1 { margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+.brand .sub { font-size: 12px; color: var(--mut); }
+.pill-ro {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px;
+  font-size: 11px; font-weight: 600; background: rgba(16, 185, 129, 0.14); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.35);
+}
+.tabs {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+  background: var(--sf1); border: 1px solid var(--bd); border-radius: 14px; padding: 5px; margin: 14px 0;
+}
+.tab-btn {
+  min-height: 48px; border: 0; border-radius: 10px; background: transparent; color: var(--mut);
+  font-size: 13px; font-weight: 600; cursor: pointer; padding: 8px 6px; transition: all .15s ease;
+}
+.tab-btn.active { background: var(--sf2); color: var(--tx); box-shadow: 0 2px 8px rgba(0,0,0,0.35); border: 1px solid rgba(56,189,248,0.35); }
+.panel { display: none; }
+.panel.active { display: block; }
+
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.card {
+  background: var(--sf1); border: 1px solid var(--bd); border-radius: 16px; padding: 15px;
+}
+.card-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.badge {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;
+  padding: 4px 9px; border-radius: 999px; color: #fff;
+}
+.sha { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: var(--mut); }
+.btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 48px; padding: 10px 12px; border-radius: 12px; font-size: 13px; font-weight: 600;
+  cursor: pointer; border: 1px solid var(--bd); background: var(--sf2); color: var(--tx); text-align: center;
+}
+.btn-primary { background: linear-gradient(135deg, #0284c7, #0ea5e9); border-color: transparent; color: #fff; }
+.btn-emerald { background: linear-gradient(135deg, #059669, #10b981); border-color: transparent; color: #fff; }
+.btn-slate { background: #334155; border-color: rgba(255,255,255,0.12); color: #fff; }
+.btn-sm { min-height: 44px; padding: 8px 10px; font-size: 12px; }
+
+.stat-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; }
+.stat { background: rgba(255,255,255,0.03); border: 1px solid var(--bd); border-radius: 10px; padding: 8px; text-align: center; }
+.stat .k { font-size: 11px; color: var(--mut); }
+.stat .v { font-size: 15px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.ok { color: #34d399; }
+.warn { color: #fbbf24; }
+.bad { color: #f87171; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; max-width: 100%; }
+.chip {
+  flex: 0 0 auto; min-height: 44px; padding: 8px 13px; border-radius: 999px;
+  border: 1px solid var(--bd); background: var(--sf1); color: var(--mut);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.chip.active { background: rgba(56,189,248,0.18); border-color: var(--acc); color: #e0f2fe; }
+
+.gallery-3 {
+  display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory;
+  padding-bottom: 10px; -webkit-overflow-scrolling: touch;
+}
+@media (min-width: 860px) {
+  .gallery-3 { display: grid; grid-template-columns: repeat(3, 1fr); overflow-x: visible; }
+}
+.shot-card {
+  flex: 0 0 82vw; max-width: 340px; scroll-snap-align: center;
+  background: var(--sf1); border: 1px solid var(--bd); border-radius: 16px; overflow: hidden;
+}
+@media (min-width: 860px) { .shot-card { flex: initial; max-width: none; } }
+.shot-hd { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid var(--bd); }
+.shot-img-wrap { background: #020617; cursor: zoom-in; display: flex; justify-content: center; }
+.shot-img-wrap img { width: 100%; height: auto; display: block; }
+.shot-ft { display: flex; gap: 6px; padding: 8px 10px; border-top: 1px solid var(--bd); }
+
+/* 2-way wipe slider */
+.compare-box { max-width: 380px; margin: 0 auto; }
+.compare-stage {
+  position: relative; width: 100%; aspect-ratio: 360 / 740; border-radius: 18px; overflow: hidden;
+  border: 2px solid var(--bd); background: #020617; touch-action: none; user-select: none;
+}
+.compare-stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.compare-top { position: absolute; inset: 0; overflow: hidden; }
+.compare-line {
+  position: absolute; top: 0; bottom: 0; width: 3px; background: #38bdf8;
+  box-shadow: 0 0 12px rgba(56,189,248,0.9); pointer-events: none;
+}
+.compare-knob {
+  position: absolute; top: 50%; transform: translate(-50%, -50%);
+  width: 40px; height: 40px; border-radius: 50%; background: #0ea5e9; color: #fff;
+  border: 2px solid #fff; display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.5); pointer-events: none;
+}
+.compare-tag {
+  position: absolute; top: 10px; padding: 4px 8px; border-radius: 8px;
+  font-size: 11px; font-weight: 700; background: rgba(7,11,20,0.82); color: #fff; border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Embedded quick frame preview */
+.frame-wrap { display: none; margin-top: 14px; }
+.frame-wrap.open { display: block; }
+.phone-frame {
+  width: 360px; max-width: 100%; height: 740px; margin: 0 auto;
+  border: 3px solid #334155; border-radius: 26px; overflow: hidden; background: #000;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+}
+.phone-frame iframe { width: 100%; height: 100%; border: 0; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 9px 8px; border-bottom: 1px solid var(--bd); text-align: left; vertical-align: top; }
+th { color: var(--mut); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+.num { text-align: right; font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+#lightbox {
+  display: none; position: fixed; inset: 0; z-index: 100;
+  background: rgba(2, 6, 23, 0.95); padding: 16px;
+  flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+}
+#lightbox.open { display: flex; }
+#lightbox img { max-height: 82vh; max-width: 96vw; border-radius: 14px; border: 1px solid var(--bd); }
+.sec-title { font-size: 14px; font-weight: 700; margin: 18px 0 8px; color: #e2e8f0; }
+.note { font-size: 12px; color: var(--mut); }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <h1>InspiredTax · Mobile QA Hub</h1>
+      <div class="sub">v8.36.1 vs v8.37.0 vs ux-review/v4-iter3 · Phase 0 + Phase 1</div>
+    </div>
+    <span class="pill-ro">● Read-Only Repo · Auto-Unlocked</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="previews">1. Live Previews</button>
+    <button class="tab-btn" data-tab="gallery">2. Visual Gallery</button>
+    <button class="tab-btn" data-tab="audit">3. Phase 0+1 Audit</button>
+  </div>
+
+  <!-- TAB 1: LIVE UNLOCKED PREVIEWS -->
+  <section id="tab-previews" class="panel active">
+    <div class="card" style="margin-bottom:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+        <div>
+          <div style="font-weight:700;font-size:14px;">Launch Settings</div>
+          <div class="note">Every build auto-unlocks as <strong>Thandi Mokoena</strong> (2026/27 · Premium · PIN <code>1234</code>) with isolated storage so builds never collide.</div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="chip active" id="launch-dark">Dark</button>
+          <button class="chip" id="launch-light">Light</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-3" id="build-cards"></div>
+
+    <div class="sec-title">Deep-Link Direct to Any Screen (Opens Full-Screen)</div>
+    <div class="card table-scroll">
+      <table id="deeplink-table"></table>
+    </div>
+
+    <div class="sec-title">Inline 360×740 Phone Frame (Quick Switcher)</div>
+    <div class="card">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+        <button class="btn btn-sm btn-slate" onclick="loadFrame('v8.36.1')">Load v8.36.1</button>
+        <button class="btn btn-sm btn-primary" onclick="loadFrame('v8.37.0')">Load v8.37.0</button>
+        <button class="btn btn-sm btn-emerald" onclick="loadFrame('v4-iter3')">Load v4-iter3</button>
+        <button class="btn btn-sm" onclick="toggleFrame(false)">Close Frame</button>
+      </div>
+      <div id="frame-wrap" class="frame-wrap">
+        <div class="note" id="frame-caption" style="text-align:center;margin-bottom:8px;"></div>
+        <div class="phone-frame"><iframe id="phone-iframe" title="InspiredTax 360x740 Preview"></iframe></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 2: VISUAL GALLERY -->
+  <section id="tab-gallery" class="panel">
+    <div class="controls">
+      <div class="chips" id="screen-chips"></div>
+      <div style="display:flex;gap:6px;">
+        <button class="chip active" id="gal-dark">Dark</button>
+        <button class="chip" id="gal-light">Light</button>
+        <button class="chip active" id="gal-mode-3up">3-Up</button>
+        <button class="chip" id="gal-mode-wipe">Wipe Diff</button>
+      </div>
+    </div>
+
+    <div id="gal-3up-wrap">
+      <div class="note" style="margin-bottom:8px;">Swipe horizontally on phone to compare all 3 builds at real <code>360×740</code>. Tap any screenshot to zoom.</div>
+      <div class="gallery-3" id="gallery-grid"></div>
+    </div>
+
+    <div id="gal-wipe-wrap" style="display:none;">
+      <div class="controls" style="justify-content:center;">
+        <select id="wipe-left" class="chip" style="color:var(--tx);">
+          <option value="v8.36.1">Left: v8.36.1</option>
+          <option value="v8.37.0" selected>Left: v8.37.0</option>
+          <option value="v4-iter3">Left: v4-iter3</option>
+        </select>
+        <select id="wipe-right" class="chip" style="color:var(--tx);">
+          <option value="v8.36.1">Right: v8.36.1</option>
+          <option value="v8.37.0">Right: v8.37.0</option>
+          <option value="v4-iter3" selected>Right: v4-iter3</option>
+        </select>
+      </div>
+      <div class="compare-box">
+        <div class="compare-stage" id="compare-stage">
+          <img id="cmp-img-right" alt="Right build" />
+          <div class="compare-top" id="cmp-top" style="width:50%;">
+            <img id="cmp-img-left" alt="Left build" />
+          </div>
+          <div class="compare-line" id="cmp-line" style="left:50%;"></div>
+          <div class="compare-knob" id="cmp-knob" style="left:50%;">↔</div>
+          <span class="compare-tag" id="cmp-tag-l" style="left:10px;">v8.37.0</span>
+          <span class="compare-tag" id="cmp-tag-r" style="right:10px;">v4-iter3</span>
+        </div>
+        <div class="note" style="text-align:center;margin-top:8px;">Drag across the phone screen to compare pixels.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 3: PHASE 0 + PHASE 1 AUDIT -->
+  <section id="tab-audit" class="panel">
+    <div class="sec-title" style="margin-top:0;">Phase 0 · Tax Engine Parity (Thandi Mokoena · 2026/27)</div>
+    <div class="card table-scroll">
+      <div id="parity-badge" style="margin-bottom:10px;"></div>
+      <table id="tax-table"></table>
+    </div>
+
+    <div class="sec-title">Phase 1 · Real 360×740 Mobile DOM &amp; UX Audit (12 Panels)</div>
+    <div class="card table-scroll">
+      <table id="ux-table"></table>
+    </div>
+
+    <div class="sec-title">Per-Panel Overflow &amp; Touch-Target Breakdown (100% / 150% Scale)</div>
+    <div class="card table-scroll">
+      <table id="panel-table"></table>
+    </div>
+  </section>
+</div>
+
+<div id="lightbox" onclick="closeLightbox()">
+  <div id="lb-title" style="font-weight:700;font-size:14px;"></div>
+  <img id="lb-img" alt="Zoomed screenshot" />
+  <div class="note">Tap anywhere to close</div>
+</div>
+
+<script>
+const DATA = {"manifest": [{"id": "v8.36.1", "slug": "v8.36.1", "label": "v8.36.1", "subtitle": "Pre-M0..M9 Baseline", "git_ref": "v8.36.1", "git_path": "InspiredTax_v8_36.html", "uses_dob": true, "badge_color": "#64748b", "sha": "3e243808826d83dcf00113b956d17f6245047a4b", "date": "2026-10-25 12:07:21 +0200", "subject": "chore: prepare InspiredTax 8.36.1 (#454)", "orig_bytes": 2529813, "preview_bytes": 2546331}, {"id": "v8.37.0", "slug": "v8.37.0", "label": "v8.37.0", "subtitle": "Shipped M0–M9 Release", "git_ref": "v8.37.0", "git_path": "InspiredTax_v8_37.html", "uses_dob": false, "badge_color": "#0284c7", "sha": "2a345342016eaa1614852360727e917e56835d77", "date": "2026-11-21 01:39:00 +0200", "subject": "chore: prepare InspiredTax 8.37.0 (#514)", "orig_bytes": 2772259, "preview_bytes": 2788785}, {"id": "v4-iter3", "slug": "v4-iter3", "label": "v4-iter3", "subtitle": "UX Review + IT23 Branch", "git_ref": "origin/ux-review/v4-iter3", "git_path": "InspiredTax_v8_37.html", "uses_dob": false, "badge_color": "#10b981", "sha": "37674560c727fb02d4e2147e0900bc262faf6b92", "date": "2026-11-23 10:41:47 +0200", "subject": "fix(it23): remediate onboarding, residency gate, tax-year binding, keypad & tile selection", "orig_bytes": 2807943, "preview_bytes": 2824469}], "audit": {"builds": {"v8.36.1": {"id": "v8.36.1", "errors": [], "tax": {"taxYear": "2027", "grossIncome": 720000, "employmentGross": 720000, "businessNet": null, "rentalNet": null, "totalDeductions": null, "taxableIncome": 955520, "taxBeforeRebates": 287876.2, "rebates": 17820, "medCredits": 9024, "netTaxPayable": 261032.2, "payePaid": null, "provPaid": 24000, "balanceDue": 69032.2, "keysPresent": ["gross", "adjGross", "gi", "tei", "retTotal", "retAllowed", "retExcess", "retMax", "retLimbs", "retCapLimb", "lumpSumTotal", "nonTaxableTotal", "medInputs", "otherDed", "additionalDed", "travelDed", "companyCarDed", "homeOfficeDed", "toolsDed", "subscripDed", "subsistenceDed", "foreignSubsistenceDed", "intExempt", "cgtTaxableGain", "rentalIncome", "businessIncome", "otherReceiptsIncome", "cryptoRevenue", "investmentIncome", "pensionAnnuity", "pensionAnnuityGross", "s10cAnnuityExempt", "donTotal", "donAllowed", "donExcess", "donMax", "tbd", "taxableIncome", "taxOnIncome", "rebates"]}, "panels_100": {"dashboard": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 46, "under48": 21, "unmaskedNumeric": 1, "topChrome": 193, "bottomChrome": 54, "usableHeight": 493}, "income:main": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 67, "under48": 35, "unmaskedNumeric": 1, "topChrome": 285, "bottomChrome": 54, "usableHeight": 401}, "income:b1employment": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 19, "under48": 14, "unmaskedNumeric": 0, "topChrome": 286, "bottomChrome": 54, "usableHeight": 400}, "income:b4business": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 21, "under48": 14, "unmaskedNumeric": 0, "topChrome": 285, "bottomChrome": 54, "usableHeight": 401}, "deductions:selections": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 41, "under48": 29, "unmaskedNumeric": 0, "topChrome": 285, "bottomChrome": 54, "usableHeight": 401}, "deductions:retirement": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 25, "under48": 15, "unmaskedNumeric": 2, "topChrome": 233, "bottomChrome": 54, "usableHeight": 453}, "deductions:medical": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 21, "under48": 15, "unmaskedNumeric": 1, "topChrome": 233, "bottomChrome": 54, "usableHeight": 453}, "deductions:homeoffice": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 23, "under48": 18, "unmaskedNumeric": 2, "topChrome": 233, "bottomChrome": 54, "usableHeight": 453}, "summary:return": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 54, "under48": 36, "unmaskedNumeric": 2, "topChrome": 285, "bottomChrome": 54, "usableHeight": 401}, "summary:provtax": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 40, "under48": 22, "unmaskedNumeric": 0, "topChrome": 285, "bottomChrome": 54, "usableHeight": 401}, "projection:multiyear": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 48, "under48": 27, "unmaskedNumeric": 0, "topChrome": 293, "bottomChrome": 54, "usableHeight": 393}, "projection:optimise": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 18, "under48": 11, "unmaskedNumeric": 1, "topChrome": 185, "bottomChrome": 54, "usableHeight": 501}}, "panels_150": {"dashboard": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 46, "under48": 22, "unmaskedNumeric": 1, "topChrome": 193, "bottomChrome": 54, "usableHeight": 493}, "income:main": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 76, "under48": 32, "unmaskedNumeric": 1, "topChrome": 323, "bottomChrome": 54, "usableHeight": 363}, "income:b1employment": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 19, "under48": 6, "unmaskedNumeric": 0, "topChrome": 323, "bottomChrome": 54, "usableHeight": 363}, "income:b4business": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 21, "under48": 6, "unmaskedNumeric": 0, "topChrome": 323, "bottomChrome": 54, "usableHeight": 363}, "deductions:selections": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 50, "under48": 18, "unmaskedNumeric": 0, "topChrome": 313, "bottomChrome": 54, "usableHeight": 373}, "deductions:retirement": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 25, "under48": 10, "unmaskedNumeric": 2, "topChrome": 257, "bottomChrome": 54, "usableHeight": 429}, "deductions:medical": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 21, "under48": 10, "unmaskedNumeric": 1, "topChrome": 257, "bottomChrome": 54, "usableHeight": 429}, "deductions:homeoffice": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 23, "under48": 12, "unmaskedNumeric": 2, "topChrome": 257, "bottomChrome": 54, "usableHeight": 429}, "summary:return": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 54, "under48": 24, "unmaskedNumeric": 2, "topChrome": 323, "bottomChrome": 54, "usableHeight": 363}, "summary:provtax": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 40, "under48": 13, "unmaskedNumeric": 0, "topChrome": 323, "bottomChrome": 54, "usableHeight": 363}, "projection:multiyear": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 48, "under48": 18, "unmaskedNumeric": 0, "topChrome": 321, "bottomChrome": 54, "usableHeight": 365}, "projection:optimise": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 18, "under48": 9, "unmaskedNumeric": 1, "topChrome": 195, "bottomChrome": 54, "usableHeight": 491}}, "summary": {"panelsAudited": 12, "hOverflow100": 0, "hOverflow150": 0, "totalUnder48": 257, "maxUnder48Panel": 36, "totalUnmaskedNumeric": 10, "maxTopChromePx": 293, "minUsableHeightPx": 393, "errorCount": 0}, "shots": {"dark_dashboard": "v8.36.1_dark_dashboard.jpg", "dark_income": "v8.36.1_dark_income.jpg", "dark_deductions": "v8.36.1_dark_deductions.jpg", "dark_return": "v8.36.1_dark_return.jpg", "dark_provisional": "v8.36.1_dark_provisional.jpg", "dark_optimise": "v8.36.1_dark_optimise.jpg", "light_dashboard": "v8.36.1_light_dashboard.jpg", "light_income": "v8.36.1_light_income.jpg", "light_deductions": "v8.36.1_light_deductions.jpg", "light_return": "v8.36.1_light_return.jpg", "light_provisional": "v8.36.1_light_provisional.jpg", "light_optimise": "v8.36.1_light_optimise.jpg", "dark_onboarding": "v8.36.1_dark_onboarding.jpg", "light_onboarding": "v8.36.1_light_onboarding.jpg"}, "onboarding_metrics": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 19, "under48": 8, "unmaskedNumeric": 0, "topChrome": 125, "bottomChrome": 54, "usableHeight": 561}}, "v8.37.0": {"id": "v8.37.0", "errors": [], "tax": {"taxYear": "2027", "grossIncome": 720000, "employmentGross": 720000, "businessNet": null, "rentalNet": null, "totalDeductions": null, "taxableIncome": 955520, "taxBeforeRebates": 287876.2, "rebates": 17820, "medCredits": 9024, "netTaxPayable": 261032.2, "payePaid": null, "provPaid": 24000, "balanceDue": 69032.2, "keysPresent": ["gross", "adjGross", "gi", "tei", "retTotal", "retAllowed", "retExcess", "retMax", "retLimbs", "retCapLimb", "lumpSumTotal", "nonTaxableTotal", "medInputs", "otherDed", "additionalDed", "travelDed", "companyCarDed", "homeOfficeDed", "toolsDed", "subscripDed", "subsistenceDed", "foreignSubsistenceDed", "intExempt", "cgtTaxableGain", "rentalIncome", "businessIncome", "otherReceiptsIncome", "cryptoRevenue", "investmentIncome", "pensionAnnuity", "pensionAnnuityGross", "s10cAnnuityExempt", "donTotal", "donAllowed", "donExcess", "donMax", "tbd", "taxableIncome", "taxOnIncome", "rebates"]}, "panels_100": {"dashboard": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 60, "under48": 16, "unmaskedNumeric": 1, "topChrome": 189, "bottomChrome": 54, "usableHeight": 497}, "income:main": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 85, "under48": 22, "unmaskedNumeric": 1, "topChrome": 293, "bottomChrome": 98, "usableHeight": 349}, "income:b1employment": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 22, "under48": 5, "unmaskedNumeric": 0, "topChrome": 293, "bottomChrome": 98, "usableHeight": 349}, "income:b4business": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 23, "under48": 5, "unmaskedNumeric": 0, "topChrome": 293, "bottomChrome": 98, "usableHeight": 349}, "deductions:selections": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 55, "under48": 16, "unmaskedNumeric": 0, "topChrome": 293, "bottomChrome": 98, "usableHeight": 349}, "deductions:retirement": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 27, "under48": 9, "unmaskedNumeric": 2, "topChrome": 237, "bottomChrome": 98, "usableHeight": 405}, "deductions:medical": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 25, "under48": 8, "unmaskedNumeric": 1, "topChrome": 237, "bottomChrome": 98, "usableHeight": 405}, "deductions:homeoffice": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 25, "under48": 11, "unmaskedNumeric": 2, "topChrome": 237, "bottomChrome": 98, "usableHeight": 405}, "summary:return": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 66, "under48": 16, "unmaskedNumeric": 2, "topChrome": 293, "bottomChrome": 98, "usableHeight": 349}, "summary:provtax": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 53, "under48": 23, "unmaskedNumeric": 4, "topChrome": 293, "bottomChrome": 98, "usableHeight": 349}, "projection:multiyear": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 69, "under48": 25, "unmaskedNumeric": 4, "topChrome": 293, "bottomChrome": 98, "usableHeight": 349}, "projection:optimise": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 22, "under48": 6, "unmaskedNumeric": 1, "topChrome": 189, "bottomChrome": 98, "usableHeight": 453}}, "panels_150": {"dashboard": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 48, "under48": 10, "unmaskedNumeric": 0, "topChrome": 135, "bottomChrome": 68, "usableHeight": 537}, "income:main": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 56, "under48": 11, "unmaskedNumeric": 1, "topChrome": 334, "bottomChrome": 112, "usableHeight": 294}, "income:b1employment": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 22, "under48": 4, "unmaskedNumeric": 0, "topChrome": 326, "bottomChrome": 112, "usableHeight": 302}, "income:b4business": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 23, "under48": 4, "unmaskedNumeric": 0, "topChrome": 326, "bottomChrome": 112, "usableHeight": 302}, "deductions:selections": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 51, "under48": 11, "unmaskedNumeric": 0, "topChrome": 267, "bottomChrome": 98, "usableHeight": 375}, "deductions:retirement": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 27, "under48": 8, "unmaskedNumeric": 2, "topChrome": 259, "bottomChrome": 112, "usableHeight": 369}, "deductions:medical": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 25, "under48": 7, "unmaskedNumeric": 1, "topChrome": 259, "bottomChrome": 112, "usableHeight": 369}, "deductions:homeoffice": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 25, "under48": 10, "unmaskedNumeric": 2, "topChrome": 259, "bottomChrome": 112, "usableHeight": 369}, "summary:return": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 51, "under48": 5, "unmaskedNumeric": 0, "topChrome": 334, "bottomChrome": 112, "usableHeight": 294}, "summary:provtax": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 53, "under48": 22, "unmaskedNumeric": 4, "topChrome": 334, "bottomChrome": 112, "usableHeight": 294}, "projection:multiyear": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 26, "under48": 2, "unmaskedNumeric": 0, "topChrome": 219, "bottomChrome": 112, "usableHeight": 409}, "projection:optimise": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 22, "under48": 5, "unmaskedNumeric": 1, "topChrome": 211, "bottomChrome": 112, "usableHeight": 417}}, "summary": {"panelsAudited": 12, "hOverflow100": 0, "hOverflow150": 0, "totalUnder48": 162, "maxUnder48Panel": 25, "totalUnmaskedNumeric": 18, "maxTopChromePx": 293, "minUsableHeightPx": 349, "errorCount": 0}, "shots": {"dark_dashboard": "v8.37.0_dark_dashboard.jpg", "dark_income": "v8.37.0_dark_income.jpg", "dark_deductions": "v8.37.0_dark_deductions.jpg", "dark_return": "v8.37.0_dark_return.jpg", "dark_provisional": "v8.37.0_dark_provisional.jpg", "dark_optimise": "v8.37.0_dark_optimise.jpg", "light_dashboard": "v8.37.0_light_dashboard.jpg", "light_income": "v8.37.0_light_income.jpg", "light_deductions": "v8.37.0_light_deductions.jpg", "light_return": "v8.37.0_light_return.jpg", "light_provisional": "v8.37.0_light_provisional.jpg", "light_optimise": "v8.37.0_light_optimise.jpg", "dark_onboarding": "v8.37.0_dark_onboarding.jpg", "light_onboarding": "v8.37.0_light_onboarding.jpg"}, "onboarding_metrics": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 38, "under48": 19, "unmaskedNumeric": 0, "topChrome": 125, "bottomChrome": 54, "usableHeight": 561}}, "v4-iter3": {"id": "v4-iter3", "errors": [], "tax": {"taxYear": "2027", "grossIncome": 720000, "employmentGross": 720000, "businessNet": null, "rentalNet": null, "totalDeductions": null, "taxableIncome": 955520, "taxBeforeRebates": 287876.2, "rebates": 17820, "medCredits": 9024, "netTaxPayable": 261032.2, "payePaid": null, "provPaid": 24000, "balanceDue": 69032.2, "keysPresent": ["gross", "adjGross", "gi", "tei", "retTotal", "retAllowed", "retExcess", "retMax", "retLimbs", "retCapLimb", "lumpSumTotal", "nonTaxableTotal", "medInputs", "otherDed", "additionalDed", "travelDed", "companyCarDed", "homeOfficeDed", "toolsDed", "subscripDed", "subsistenceDed", "foreignSubsistenceDed", "intExempt", "cgtTaxableGain", "rentalIncome", "businessIncome", "otherReceiptsIncome", "cryptoRevenue", "investmentIncome", "pensionAnnuity", "pensionAnnuityGross", "s10cAnnuityExempt", "donTotal", "donAllowed", "donExcess", "donMax", "tbd", "taxableIncome", "taxOnIncome", "rebates"]}, "panels_100": {"dashboard": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 61, "under48": 16, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 54, "usableHeight": 548}, "income:main": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 86, "under48": 22, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 98, "usableHeight": 504}, "income:b1employment": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 23, "under48": 4, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 98, "usableHeight": 504}, "income:b4business": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 24, "under48": 4, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 98, "usableHeight": 504}, "deductions:selections": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 56, "under48": 15, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 98, "usableHeight": 504}, "deductions:retirement": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 28, "under48": 9, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 98, "usableHeight": 504}, "deductions:medical": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 26, "under48": 8, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 98, "usableHeight": 504}, "deductions:homeoffice": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 26, "under48": 11, "unmaskedNumeric": 2, "topChrome": 138, "bottomChrome": 98, "usableHeight": 504}, "summary:return": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 67, "under48": 16, "unmaskedNumeric": 2, "topChrome": 138, "bottomChrome": 98, "usableHeight": 504}, "summary:provtax": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 54, "under48": 23, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 98, "usableHeight": 504}, "projection:multiyear": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 70, "under48": 24, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 98, "usableHeight": 504}, "projection:optimise": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 23, "under48": 6, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 98, "usableHeight": 504}}, "panels_150": {"dashboard": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 49, "under48": 10, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 68, "usableHeight": 534}, "income:main": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 57, "under48": 11, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 112, "usableHeight": 490}, "income:b1employment": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 23, "under48": 3, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 112, "usableHeight": 490}, "income:b4business": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 24, "under48": 3, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 112, "usableHeight": 490}, "deductions:selections": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 51, "under48": 11, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 98, "usableHeight": 504}, "deductions:retirement": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 28, "under48": 8, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 112, "usableHeight": 490}, "deductions:medical": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 26, "under48": 7, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 112, "usableHeight": 490}, "deductions:homeoffice": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 26, "under48": 10, "unmaskedNumeric": 2, "topChrome": 138, "bottomChrome": 112, "usableHeight": 490}, "summary:return": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 67, "under48": 15, "unmaskedNumeric": 2, "topChrome": 138, "bottomChrome": 112, "usableHeight": 490}, "summary:provtax": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 54, "under48": 22, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 112, "usableHeight": 490}, "projection:multiyear": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 27, "under48": 1, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 112, "usableHeight": 490}, "projection:optimise": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 23, "under48": 5, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 112, "usableHeight": 490}}, "summary": {"panelsAudited": 12, "hOverflow100": 0, "hOverflow150": 0, "totalUnder48": 158, "maxUnder48Panel": 24, "totalUnmaskedNumeric": 4, "maxTopChromePx": 138, "minUsableHeightPx": 504, "errorCount": 0}, "shots": {"dark_dashboard": "v4-iter3_dark_dashboard.jpg", "dark_income": "v4-iter3_dark_income.jpg", "dark_deductions": "v4-iter3_dark_deductions.jpg", "dark_return": "v4-iter3_dark_return.jpg", "dark_provisional": "v4-iter3_dark_provisional.jpg", "dark_optimise": "v4-iter3_dark_optimise.jpg", "light_dashboard": "v4-iter3_light_dashboard.jpg", "light_income": "v4-iter3_light_income.jpg", "light_deductions": "v4-iter3_light_deductions.jpg", "light_return": "v4-iter3_light_return.jpg", "light_provisional": "v4-iter3_light_provisional.jpg", "light_optimise": "v4-iter3_light_optimise.jpg", "dark_onboarding": "v4-iter3_dark_onboarding.jpg", "light_onboarding": "v4-iter3_light_onboarding.jpg"}, "onboarding_metrics": {"vw": 360, "vh": 740, "scrollWidth": 360, "hOverflow": false, "visibleInteractive": 36, "under48": 16, "unmaskedNumeric": 0, "topChrome": 138, "bottomChrome": 54, "usableHeight": 548}}}, "screens": [{"slug": "dashboard", "label": "Dashboard", "mode": "unlocked", "nav": "dashboard"}, {"slug": "onboarding", "label": "Onboarding Step 1", "mode": "onboarding", "nav": ""}, {"slug": "income", "label": "Income Overview", "mode": "unlocked", "nav": "income:main"}, {"slug": "deductions", "label": "Deductions", "mode": "unlocked", "nav": "deductions:selections"}, {"slug": "return", "label": "Tax Return (ITA34)", "mode": "unlocked", "nav": "summary:return"}, {"slug": "provisional", "label": "Provisional Tax", "mode": "unlocked", "nav": "summary:provtax"}, {"slug": "optimise", "label": "RA Optimise", "mode": "unlocked", "nav": "projection:optimise"}], "generated_at": "2026-11-25 01:25:31 UTC"}};
+const BUILDS = DATA.manifest;
+const AUDIT = DATA.audit;
+const SCREENS = AUDIT.screens;
+
+let launchTheme = 'dark';
+let galTheme = 'dark';
+let galScreen = 'dashboard';
+let galMode = '3up';
+
+// Tabs
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+function fmtR(n) {
+  if (n === null || n === undefined) return '—';
+  const sign = n < 0 ? '-' : '';
+  return sign + 'R ' + Math.abs(Math.round(n)).toLocaleString('en-ZA').replace(/,/g, ' ');
+}
+
+function renderBuildCards() {
+  const wrap = document.getElementById('build-cards');
+  wrap.innerHTML = BUILDS.map(b => {
+    const s = AUDIT.builds[b.id].summary;
+    const btnCls = b.id === 'v4-iter3' ? 'btn-emerald' : (b.id === 'v8.37.0' ? 'btn-primary' : 'btn-slate');
+    return `
+      <div class="card">
+        <div class="card-hd">
+          <div>
+            <span class="badge" style="background:${b.badge_color}">${b.label}</span>
+            <div style="font-weight:700;font-size:15px;margin-top:6px;">${b.subtitle}</div>
+          </div>
+          <span class="sha">${b.sha.slice(0,8)}</span>
+        </div>
+        <div class="note" style="min-height:34px;">${b.subject}</div>
+        <div class="stat-strip">
+          <div class="stat"><div class="k">Overflow</div><div class="v ${s.hOverflow100+s.hOverflow150===0?'ok':'bad'}">${s.hOverflow100} / ${s.hOverflow150}</div></div>
+          <div class="stat"><div class="k">&lt;48px</div><div class="v ${s.totalUnder48===0?'ok':'warn'}">${s.totalUnder48}</div></div>
+          <div class="stat"><div class="k">OS Kbd</div><div class="v ${s.totalUnmaskedNumeric===0?'ok':'warn'}">${s.totalUnmaskedNumeric}</div></div>
+        </div>
+        <div class="btn-row">
+          <a class="btn ${btnCls}" href="${b.slug}.html?mode=unlocked&theme=${launchTheme}">Open Seeded</a>
+          <a class="btn" href="${b.slug}.html?mode=onboarding&theme=${launchTheme}">Onboarding</a>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderDeepLinks() {
+  const tbl = document.getElementById('deeplink-table');
+  const rows = SCREENS.map(sc => `
+    <tr>
+      <td><strong>${sc.label}</strong></td>
+      ${BUILDS.map(b => {
+        const q = sc.mode === 'onboarding'
+          ? `mode=onboarding&theme=${launchTheme}`
+          : `mode=unlocked&nav=${encodeURIComponent(sc.nav)}&theme=${launchTheme}`;
+        return `<td><a class="btn btn-sm" style="width:100%;" href="${b.slug}.html?${q}">${b.label} ↗</a></td>`;
+      }).join('')}
+    </tr>
+  `).join('');
+  tbl.innerHTML = `<thead><tr><th>Screen</th><th>v8.36.1</th><th>v8.37.0</th><th>v4-iter3</th></tr></thead><tbody>${rows}</tbody>`;
+}
+
+document.getElementById('launch-dark').onclick = () => { launchTheme = 'dark'; updateLaunchTheme(); };
+document.getElementById('launch-light').onclick = () => { launchTheme = 'light'; updateLaunchTheme(); };
+function updateLaunchTheme() {
+  document.getElementById('launch-dark').classList.toggle('active', launchTheme === 'dark');
+  document.getElementById('launch-light').classList.toggle('active', launchTheme === 'light');
+  renderBuildCards();
+  renderDeepLinks();
+}
+
+window.loadFrame = function(slug) {
+  const wrap = document.getElementById('frame-wrap');
+  const ifr = document.getElementById('phone-iframe');
+  wrap.classList.add('open');
+  document.getElementById('frame-caption').textContent = `Live 360×740 frame · ${slug} (${launchTheme})`;
+  ifr.src = `${slug}.html?mode=unlocked&theme=${launchTheme}`;
+};
+window.toggleFrame = function(open) {
+  const wrap = document.getElementById('frame-wrap');
+  wrap.classList.toggle('open', open);
+  if (!open) document.getElementById('phone-iframe').src = 'about:blank';
+};
+
+// Gallery
+function renderScreenChips() {
+  document.getElementById('screen-chips').innerHTML = SCREENS.map(sc =>
+    `<button class="chip ${sc.slug===galScreen?'active':''}" data-screen="${sc.slug}">${sc.label}</button>`
+  ).join('');
+  document.querySelectorAll('#screen-chips .chip').forEach(c => {
+    c.onclick = () => { galScreen = c.dataset.screen; renderScreenChips(); renderGallery(); };
+  });
+}
+
+function renderGallery() {
+  const sc = SCREENS.find(s => s.slug === galScreen);
+  const grid = document.getElementById('gallery-grid');
+  grid.innerHTML = BUILDS.map(b => {
+    const src = `shots/${b.id}_${galTheme}_${galScreen}.jpg`;
+    const q = sc.mode === 'onboarding'
+      ? `mode=onboarding&theme=${galTheme}`
+      : `mode=unlocked&nav=${encodeURIComponent(sc.nav)}&theme=${galTheme}`;
+    return `
+      <div class="shot-card">
+        <div class="shot-hd">
+          <span class="badge" style="background:${b.badge_color}">${b.label}</span>
+          <span class="sha">${b.sha.slice(0,8)} · ${galTheme}</span>
+        </div>
+        <div class="shot-img-wrap" onclick="openLightbox('${src}', '${b.label} — ${sc.label} (${galTheme})')">
+          <img src="${src}" loading="lazy" alt="${b.label} ${sc.label}" />
+        </div>
+        <div class="shot-ft">
+          <a class="btn btn-sm" style="flex:1;" href="${b.slug}.html?${q}">Open Live ${b.label} ↗</a>
+        </div>
+      </div>`;
+  }).join('');
+  updateWipe();
+}
+
+function updateWipe() {
+  const L = document.getElementById('wipe-left').value;
+  const R = document.getElementById('wipe-right').value;
+  document.getElementById('cmp-img-left').src = `shots/${L}_${galTheme}_${galScreen}.jpg`;
+  document.getElementById('cmp-img-right').src = `shots/${R}_${galTheme}_${galScreen}.jpg`;
+  document.getElementById('cmp-tag-l').textContent = L;
+  document.getElementById('cmp-tag-r').textContent = R;
+}
+
+document.getElementById('wipe-left').onchange = updateWipe;
+document.getElementById('wipe-right').onchange = updateWipe;
+document.getElementById('gal-dark').onclick = () => { galTheme = 'dark'; syncGalControls(); };
+document.getElementById('gal-light').onclick = () => { galTheme = 'light'; syncGalControls(); };
+document.getElementById('gal-mode-3up').onclick = () => { galMode = '3up'; syncGalControls(); };
+document.getElementById('gal-mode-wipe').onclick = () => { galMode = 'wipe'; syncGalControls(); };
+function syncGalControls() {
+  document.getElementById('gal-dark').classList.toggle('active', galTheme === 'dark');
+  document.getElementById('gal-light').classList.toggle('active', galTheme === 'light');
+  document.getElementById('gal-mode-3up').classList.toggle('active', galMode === '3up');
+  document.getElementById('gal-mode-wipe').classList.toggle('active', galMode === 'wipe');
+  document.getElementById('gal-3up-wrap').style.display = galMode === '3up' ? 'block' : 'none';
+  document.getElementById('gal-wipe-wrap').style.display = galMode === 'wipe' ? 'block' : 'none';
+  renderGallery();
+}
+
+// Wipe slider drag
+(function initWipe() {
+  const stage = document.getElementById('compare-stage');
+  const topEl = document.getElementById('cmp-top');
+  const line = document.getElementById('cmp-line');
+  const knob = document.getElementById('cmp-knob');
+  let dragging = false;
+  function setPct(clientX) {
+    const r = stage.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(100, ((clientX - r.left) / r.width) * 100));
+    topEl.style.width = pct + '%';
+    line.style.left = pct + '%';
+    knob.style.left = pct + '%';
+  }
+  stage.addEventListener('pointerdown', e => { dragging = true; stage.setPointerCapture(e.pointerId); setPct(e.clientX); });
+  stage.addEventListener('pointermove', e => { if (dragging) setPct(e.clientX); });
+  stage.addEventListener('pointerup', () => { dragging = false; });
+  stage.addEventListener('pointercancel', () => { dragging = false; });
+})();
+
+window.openLightbox = function(src, title) {
+  document.getElementById('lb-img').src = src;
+  document.getElementById('lb-title').textContent = title;
+  document.getElementById('lightbox').classList.add('open');
+};
+window.closeLightbox = function() {
+  document.getElementById('lightbox').classList.remove('open');
+};
+
+// Audit tables
+function renderAudit() {
+  const b1 = AUDIT.builds['v8.36.1'].tax || {};
+  const b2 = AUDIT.builds['v8.37.0'].tax || {};
+  const b3 = AUDIT.builds['v4-iter3'].tax || {};
+  const keys = [
+    ['taxableIncome', 'Taxable Income'],
+    ['taxBeforeRebates', 'Tax Before Rebates'],
+    ['rebates', 'Primary Rebate'],
+    ['medCredits', 'Medical Credits (s6A + s6B)'],
+    ['netTaxPayable', 'Net Tax Payable'],
+    ['payePaid', 'PAYE Withheld'],
+    ['provPaid', 'Provisional P1 Paid'],
+    ['balanceDue', 'Balance Due / (Refund)'],
+  ];
+  let allMatch = true;
+  const taxRows = keys.map(([k, lbl]) => {
+    const v1 = b1[k], v2 = b2[k], v3 = b3[k];
+    const match = v1 === v2 && v2 === v3;
+    if (!match) allMatch = false;
+    return `<tr>
+      <td>${lbl}</td>
+      <td class="num">${fmtR(v1)}</td>
+      <td class="num">${fmtR(v2)}</td>
+      <td class="num">${fmtR(v3)}</td>
+      <td class="num ${match?'ok':'bad'}">${match?'MATCH':'DIFF'}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('parity-badge').innerHTML = allMatch
+    ? '<span class="pill-ro">✓ 100% Rand-for-Rand Tax Engine Parity Across All 3 Builds</span>'
+    : '<span class="pill-ro" style="background:rgba(239,68,68,.16);color:#fca5a5;border-color:rgba(239,68,68,.4);">⚠ Engine Delta Detected — Inspect Rows Below</span>';
+  document.getElementById('tax-table').innerHTML =
+    `<thead><tr><th>SARS Engine Line</th><th class="num">v8.36.1</th><th class="num">v8.37.0</th><th class="num">v4-iter3</th><th class="num">Parity</th></tr></thead><tbody>${taxRows}</tbody>`;
+
+  const s1 = AUDIT.builds['v8.36.1'].summary;
+  const s2 = AUDIT.builds['v8.37.0'].summary;
+  const s3 = AUDIT.builds['v4-iter3'].summary;
+  const uxRows = [
+    ['Horizontal Overflow Panels (100%)', s1.hOverflow100, s2.hOverflow100, s3.hOverflow100, v => v===0?'ok':'bad'],
+    ['Horizontal Overflow Panels (150% zoom)', s1.hOverflow150, s2.hOverflow150, s3.hOverflow150, v => v===0?'ok':'bad'],
+    ['Interactive Targets < 48px (sum across 12 panels)', s1.totalUnder48, s2.totalUnder48, s3.totalUnder48, v => v===0?'ok':'warn'],
+    ['Unmasked Numeric Inputs (OS keyboard pops)', s1.totalUnmaskedNumeric, s2.totalUnmaskedNumeric, s3.totalUnmaskedNumeric, v => v===0?'ok':'warn'],
+    ['Max Sticky Top Chrome (px)', s1.maxTopChromePx + ' px', s2.maxTopChromePx + ' px', s3.maxTopChromePx + ' px', () => ''],
+    ['Min Usable Reading Viewport at 740px (px)', s1.minUsableHeightPx + ' px', s2.minUsableHeightPx + ' px', s3.minUsableHeightPx + ' px', () => ''],
+    ['Runtime Console / Page Errors', s1.errorCount, s2.errorCount, s3.errorCount, v => v===0?'ok':'bad'],
+  ].map(([lbl, a, b, c, cls]) => `<tr>
+    <td>${lbl}</td>
+    <td class="num ${cls(a)}">${a}</td>
+    <td class="num ${cls(b)}">${b}</td>
+    <td class="num ${cls(c)}">${c}</td>
+  </tr>`).join('');
+  document.getElementById('ux-table').innerHTML =
+    `<thead><tr><th>Mobile 360×740 Metric</th><th class="num">v8.36.1</th><th class="num">v8.37.0</th><th class="num">v4-iter3</th></tr></thead><tbody>${uxRows}</tbody>`;
+
+  const pKeys = Object.keys(AUDIT.builds['v4-iter3'].panels_100);
+  const pRows = pKeys.map(pk => {
+    const cell = bid => {
+      const m100 = AUDIT.builds[bid].panels_100[pk];
+      const m150 = AUDIT.builds[bid].panels_150[pk];
+      if (!m100) return '<td class="num">—</td>';
+      const ovf = (m100.hOverflow ? '100%!' : 'ok') + '/' + (m150.hOverflow ? '150%!' : 'ok');
+      const cls = (m100.hOverflow || m150.hOverflow) ? 'bad' : (m100.under48 > 0 ? 'warn' : 'ok');
+      return `<td class="num ${cls}">${ovf} · &lt;48:${m100.under48} · kbd:${m100.unmaskedNumeric}</td>`;
+    };
+    return `<tr><td><code>${pk}</code></td>${cell('v8.36.1')}${cell('v8.37.0')}${cell('v4-iter3')}</tr>`;
+  }).join('');
+  document.getElementById('panel-table').innerHTML =
+    `<thead><tr><th>Panel</th><th class="num">v8.36.1</th><th class="num">v8.37.0</th><th class="num">v4-iter3</th></tr></thead><tbody>${pRows}</tbody>`;
+}
+
+renderBuildCards();
+renderDeepLinks();
+renderScreenChips();
+renderGallery();
+renderAudit();
+</script>
+</body>
+</html>
