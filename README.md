@@ -12,10 +12,17 @@ Tap **Download**, then open the downloaded file from Android **Downloads** in **
 
 | File | Build | What's Inside | Mobile Download |
 |---|---|---|---|
+| **[`onboarding-redesign-v2.html`](blob/main/onboarding-redesign-v2.html)** | **Prototype (v8.36.1 style)** | Restyled to exact `v8.36.1` Dark/Light tokens, Inter + Space Grotesk, transparent R mark, stepper dots, Lip-v3 icons, and fixed `.msi-*` PUA glyphs (all assets inlined) | [**Download onboarding-redesign-v2.html (354 KB)**](https://github.com/inspiredfr/inspiredtax-qa-preview/raw/main/onboarding-redesign-v2.html) |
 | **[`v8.36.1.html`](blob/main/v8.36.1.html)** | `v8.36.1` (`3e243808`) | Pre-M0..M9 baseline · Auto-unlocked **Thandi Mokoena** (2026/27, Premium, PIN `1234`) + floating `QA` pill (Seeded / Onboarding / Lock / Theme) | [**Download v8.36.1.html (2.5 MB)**](https://github.com/inspiredfr/inspiredtax-qa-preview/raw/main/v8.36.1.html) |
 | **[`v8.37.0.html`](blob/main/v8.37.0.html)** | `v8.37.0` (`2a345342`) | Shipped M0–M9 + Remediation · Same auto-unlocked persona + floating `QA` pill | [**Download v8.37.0.html (2.8 MB)**](https://github.com/inspiredfr/inspiredtax-qa-preview/raw/main/v8.37.0.html) |
 | **[`v4-iter3.html`](blob/main/v4-iter3.html)** | `ux-review/v4-iter3` (`37674560`) | 17-commit Fresh-Eyes UX + IT23 branch · Same auto-unlocked persona + floating `QA` pill | [**Download v4-iter3.html (2.8 MB)**](https://github.com/inspiredfr/inspiredtax-qa-preview/raw/main/v4-iter3.html) |
 | **[`visual-gallery-offline.html`](blob/main/visual-gallery-offline.html)** | All 3 builds | Interactive 3-Up swipe gallery + **2-Way pixel wipe slider** (42 embedded `360×740` Dark/Light screenshots) + Phase 0+1 Audit | [**Download visual-gallery-offline.html (5.3 MB)**](https://github.com/inspiredfr/inspiredtax-qa-preview/raw/main/visual-gallery-offline.html) |
+
+### Onboarding Redesign v2 (Restyled to `v8.36.1`)
+
+| Step 1 (Dark) | Step 1 (Light) | Step 4 (Dark) |
+|---|---|---|
+| <img src="shots/ob_v2_dark_step1.jpg" width="240" alt="Onboarding v2 Dark Step 1" /> | <img src="shots/ob_v2_light_step1.jpg" width="240" alt="Onboarding v2 Light Step 1" /> | <img src="shots/ob_v2_dark_step4.jpg" width="240" alt="Onboarding v2 Dark Step 4" /> |
 
 > **Tip inside any opened app:** Tap the floating **`QA · <version>`** pill near the bottom-right to switch between **Seeded App (Thandi)**, **Fresh Onboarding Step 1**, **Lock Screen**, and **Dark / Light Theme**.
 
