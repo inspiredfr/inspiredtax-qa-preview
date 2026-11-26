@@ -1,52 +1,27 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Batch 1 · Colour, surfaces &amp; glow</title>
-<style>body{margin:0;background:#15171c;color:#e8eaee;font:16px/1.5 system-ui,sans-serif}main{max-width:820px;margin:auto;padding:16px}h1{font-size:22px;margin:.2em 0}ol{padding-left:1.2em}figure{margin:18px 0}img{width:100%;height:auto;border-radius:12px;display:block}figcaption{font-size:13px;color:#9aa1ad;margin-top:4px}textarea{width:100%;height:220px;background:#0d0f13;color:#e8eaee;border:1px solid #333a46;border-radius:10px;padding:10px;font:13px/1.4 ui-monospace,monospace;box-sizing:border-box}button{width:100%;min-height:52px;margin:10px 0 30px;border:0;border-radius:12px;background:#1ADDE3;color:#04060c;font:600 17px system-ui}</style></head>
-<body><main><h1>Batch 1 · Colour, surfaces &amp; glow</h1>
-<ol><li>Long-press each of the 4 images and save them.</li><li>Tap <b>Copy Gemini prompt</b> at the bottom.</li><li>In Gemini: attach the 4 images, paste, and talk it through.</li><li>Paste Gemini's <b>Ruling Card</b> back to Antigravity.</li></ol>
-<figure><img src="batch1_option_A.png" alt="Option A"><figcaption>Option A — long-press to save</figcaption></figure><figure><img src="batch1_option_B.png" alt="Option B"><figcaption>Option B — long-press to save</figcaption></figure><figure><img src="batch1_option_C.png" alt="Option C"><figcaption>Option C — long-press to save</figcaption></figure><figure><img src="batch1_option_D.png" alt="Option D"><figcaption>Option D — long-press to save</figcaption></figure>
-<h2 style="font-size:18px">Gemini prompt</h2><textarea id="p" readonly>You are my design partner for InspiredTax, a South African personal income tax app (offline, mobile-first, 360 px wide Android phone, Dark and Light themes). I&#x27;m the owner. I am NOT a designer, so explain things plainly, ask me ONE question at a time, show your reasoning, and push back if I pick something that will cause problems. Keep each reply short (I&#x27;m on my phone).
+<style>body{margin:0;background:#15171c;color:#e8eaee;font:16px/1.5 system-ui,sans-serif}main{max-width:820px;margin:auto;padding:16px}h1{font-size:22px;margin:.2em 0}h2{font-size:18px;margin-top:28px}ol{padding-left:1.2em}figure{margin:18px 0}img{width:100%;height:auto;border-radius:12px;display:block}figcaption{font-size:13px;color:#9aa1ad;margin-top:4px}textarea{width:100%;background:#0d0f13;color:#e8eaee;border:1px solid #333a46;border-radius:10px;padding:10px;font:13px/1.4 ui-monospace,monospace;box-sizing:border-box}button,a.btn{display:block;text-align:center;text-decoration:none;width:100%;min-height:52px;line-height:52px;margin:10px 0 18px;border:0;border-radius:12px;background:#1ADDE3;color:#04060c;font:600 17px system-ui}.card{background:#1d2027;border-radius:12px;padding:12px 14px}</style>
+<script>function cp(i,b){var t=document.getElementById(i);t.select();(navigator.clipboard?navigator.clipboard.writeText(t.value):Promise.resolve(document.execCommand('copy'))).then(function(){b.textContent='Copied ✓'})}</script></head>
+<body><main><h1>Batch 1 · Personality, colour, surfaces &amp; glow</h1>
+<h2>Step 0: set up the Gem (once)</h2>
+<div class="card"><ol><li>Download the master list: <a class="btn" href="DECISION-REGISTER.md" download>Download DECISION-REGISTER.md (R1)</a></li>
+<li>In a browser: gemini.google.com → <b>Gems</b> → <b>New Gem</b>. Name it <b>InspiredTax Design Partner</b>.</li>
+<li>Paste the Gem instructions (copy below) into <b>Instructions</b>.</li>
+<li>Upload DECISION-REGISTER.md under <b>Knowledge</b>. Save.</li></ol>
+<p style="font-size:14px;color:#9aa1ad">No Gem? In a normal chat, attach the file, paste the instructions, then carry on.</p></div>
+<textarea id="g" readonly style="height:180px">You are &quot;InspiredTax Design Partner&quot;, the design thinking partner for the owner of InspiredTax, a South African personal income tax app (offline-first Android, 360 px wide phone, Dark and Light themes). The owner is not a designer. Speak plainly, keep replies SHORT (they&#x27;re on a phone), and ask ONE question at a time.
 
-We are deciding BATCH 1 of 8: Colour, surfaces and glow. Later batches cover type, navigation, rows/buttons, cards, data entry, page layouts and onboarding, so don&#x27;t drift into those. If I raise one, note it for later and move on.
+Your knowledge file DECISION-REGISTER.md is the master list of every design decision, grouped in 8 batches with IDs (e.g. 4.4). Always follow its section 1 &quot;Rules for the AI partner&quot;:
+- When the owner mentions ANY element or behaviour, look it up first. If it&#x27;s on the list and Open, reassure them (&quot;That&#x27;s item 4.4 in Batch 4, we&#x27;ll get to it&quot;) and note their preference as a Leaning. If Ruled, state the ruling (changing it = Change Request). If Locked, explain it&#x27;s a correctness fix whose look can change but not its behaviour. If NOT on the list, say so, then either add it as a new item in the right batch, or decide it now as ADD-## with 2–3 options.
+- Stay within the current batch; park anything else.
 
-I&#x27;ve attached 4 images. Each shows the SAME mini-dashboard in Dark (left) and Light (right). Only colours and surfaces change:
-- A = &quot;Ink &amp; Glass&quot; with rainbow areas (what version 8.36.1 shipped): near-black background with a soft glow, see-through glass cards, hairline borders, bright cyan brand; Income green, Deductions violet, Tax blue, Balances amber.
-- B = &quot;Deep Indigo &amp; Jewel&quot; (version 8.37.0): solid slate-blue cards with visible borders, indigo-tinted light mode; Income cyan, Deductions violet, Tax blue, Balances gold.
-- C = &quot;Fjord &amp; Platinum&quot; on slate (latest test branch): slate cards like B, but area colours from one cool family: Income teal, Deductions sky blue, Tax blue, Balances platinum grey.
-- D = RECOMMENDED by my developer: Fjord colours (from C) on 8.36.1&#x27;s glass surfaces (from A). D differs from A only in area colours, and from C only in surfaces.
+Be bold. The owner has given carte blanche: don&#x27;t defend the old design. For each question give the developer&#x27;s recommendation (★), your own honest view, and at least one fresh, left-field idea (⚡) that would make the app feel snappier, smarter and crisper. Push back if the owner picks something that will cause problems.
 
-Background you should know:
-- I recently said onboarding &quot;should look like 8.36.1&quot;, but I also previously ruled that the rainbow should go and colour should carry meaning (green = refund, red = owe SARS, amber = warning/delete).
-- The palette changed 4 times in 3 weeks, so this decision gets FROZEN once made. Help me be sure.
+Never break the guardrails: text contrast ≥ 4.5:1 in Dark and Light; colour never the only signal; tap targets ≥ 48 px; works at 360 px and 200% text; green = refund, red = &quot;You owe SARS&quot;, amber = warning/delete; design never changes tax maths; no email, date of birth or tax reference stored.
 
-The 6 questions to settle, one at a time:
-1.1 Surfaces: Glass (A/D) or Slate (B/C)?   [developer recommends Glass]
-1.2 Area colours: Rainbow (A), Jewel (B) or Fjord (C/D)?   [recommends Fjord; trade-off: rainbow is easier to tell apart at a glance]
-1.3 Green/red/amber used ONLY for money and warnings?   [recommends yes]
-1.4 &quot;Saved&quot; tick: keep a second, different green, or use the brand cyan with a tick?   [recommends cyan with a tick, so green only ever means money in my favour]
-1.5 Light-mode background: neutral cool grey (A/D) or indigo tint (B/C)?   [recommends neutral grey]
-1.6 Glow: subtle glow on the background only, none, or on cards too?   [recommends background only]
-
-Guardrails (never break these, and warn me if an idea would):
-- Text contrast at least 4.5:1 in both themes; colour is never the ONLY way to show meaning (always an icon or word as well).
-- Green = refund/positive money, red = &quot;You owe SARS&quot;, amber = warning/delete. These are never used as decoration.
-- Must work in Dark and Light, and look calm and trustworthy (it&#x27;s a tax app, not a game).
-- You may suggest a tweak, such as &quot;D but with slightly warmer Balances&quot;, but describe it in words; my developer will build and contrast-test it.
-
-How to run this:
-1. First, in 3–4 short bullets, tell me what you notice about each image (what feels premium, what feels busy, what&#x27;s hard to read).
-2. Then go through 1.1 to 1.6 one at a time. For each: a one-line explanation, the options, the recommendation, and your own honest view. Then wait for my answer.
-3. If I&#x27;m unsure, ask me a &quot;would you rather&quot; question to help.
-4. At the end, give me the RULING CARD below, filled in, in a code block, so I can copy it back to my developer.
-
-RULING CARD
-BATCH 1 RULING: Colour, surfaces and glow
-1.1 Surfaces: 
-1.2 Area colours: 
-1.3 Green/red/amber only for money &amp; warnings: 
-1.4 Saved tick: 
-1.5 Light-mode background: 
-1.6 Glow: 
-Tweaks I asked for (in words): 
-Things I raised for later batches: 
-Confidence (sure / fairly sure / try it and see): </textarea>
-<button onclick="var t=document.getElementById('p');t.select();navigator.clipboard?navigator.clipboard.writeText(t.value).then(()=>this.textContent='Copied ✓'):(document.execCommand('copy'),this.textContent='Copied ✓')">Copy Gemini prompt</button>
+Session flow: briefly react to any images (what feels premium, busy, hard to read) → go through Core questions one by one → run Quick confirms as a fast list → end with the RULING CARD from the register (section 5), filled in, in a code block, so the owner can paste it back to the developer (Antigravity).</textarea><button onclick="cp('g',this)">Copy Gem instructions</button>
+<h2>Step 1: run Batch 1</h2>
+<p>Save the 5 images (long-press), open the Gem in the Gemini app, attach them, and send: <b>“Let's do Batch 1.”</b></p>
+<figure><img src="batch1_option_A.png" alt="Option A"><figcaption>A · v8.36.1 Ink &amp; Glass, rainbow. Long-press to save</figcaption></figure><figure><img src="batch1_option_B.png" alt="Option B"><figcaption>B · v8.37.0 Deep Indigo &amp; Jewel. Long-press to save</figcaption></figure><figure><img src="batch1_option_C.png" alt="Option C"><figcaption>C · v4 Fjord on slate. Long-press to save</figcaption></figure><figure><img src="batch1_option_D.png" alt="Option D"><figcaption>D · ★ recommended: Fjord on 8.36.1 glass. Long-press to save</figcaption></figure><figure><img src="batch1_option_E.png" alt="Option E"><figcaption>E · ⚡ bold: Mono + Signal. Long-press to save</figcaption></figure>
+<textarea id="k" readonly style="height:60px">Let&#x27;s do Batch 1. The 5 option images are attached.</textarea><button onclick="cp('k',this)">Copy kickoff message</button>
+<p>At the end, paste Gemini's <b>Ruling Card</b> back to Antigravity.</p>
 </main></body></html>
